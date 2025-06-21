@@ -2,7 +2,8 @@
 
 use strict;
 use warnings;
-use experimental "switch";
+use v5.18;
+use experimental qw(switch);
 use vars qw($CMD $DID @MODES);
 
 $CMD = "/opt/homebrew/bin/displayplacer";
@@ -13,6 +14,14 @@ sub getcurmode {
     for $_ (`$CMD list`) {
         if (/current mode$/) {
             return /mode (\d\d):/;
+        }
+    }
+}
+
+sub getcurres {
+    for $_ (`$CMD list`) {
+        if (/current mode$/) {
+            return /res:(\d+x\d+)/;
         }
     }
 }
@@ -45,4 +54,5 @@ alternatively + (-) to increase (decrease) the current mode
 
 exit 0 if ! $newmode || $newmode == $curmode;
 
-exec $CMD, "id:$DID mode:$newmode origin:(0,0) degree:0 quiet:true";
+system $CMD, "id:$DID mode:$newmode origin:(0,0) degree:0 quiet:true";
+say getcurres;
